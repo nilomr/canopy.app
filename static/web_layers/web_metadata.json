@@ -1,0 +1,90 @@
+{
+  "extent_bounds": [
+    614626.0727505416,
+    5737055.846415076,
+    614851.765749458,
+    5737234.717984922
+  ],
+  "species_list": [
+    "ash",
+    "beech",
+    "birch",
+    "dead-understory",
+    "hawthorn",
+    "lime spp.",
+    "oak",
+    "sweet chestnut",
+    "sycamore"
+  ],
+  "crown_species_list": [],
+  "combined_species_list": [
+    "ash",
+    "beech",
+    "birch",
+    "dead-understory",
+    "hawthorn",
+    "lime spp.",
+    "oak",
+    "sweet chestnut",
+    "sycamore"
+  ],
+  "species_colors": {
+    "ash": "#64B989",
+    "beech": "#859AC9",
+    "birch": "#F0E68C",
+    "dead/understory": "#DFDFDF",
+    "field maple": "#FF6347",
+    "hawthorn": "#DC143C",
+    "hazel": "#DEB887",
+    "lime": "#32CD32",
+    "ssp. oak": "#B36A2F",
+    "sweet chestnut": "#A0522D",
+    "sycamore": "#A5CE33"
+  },
+  "crown_counts": {},
+  "layers": {
+    "rgb_background": "layers/rgb_background.webp",
+    "crown_outlines": "crown-masks/Tagged_delim_crowns_2024.shp",
+    "species_crowns": {},
+    "species_masks": {
+      "ash": "layers/ash_mask.png",
+      "beech": "layers/beech_mask.png",
+      "birch": "layers/birch_mask.png",
+      "dead-understory": "layers/dead-understory_mask.png",
+      "hawthorn": "layers/hawthorn_mask.png",
+      "lime spp.": "layers/lime spp._mask.png",
+      "oak": "layers/oak_mask.png",
+      "sweet chestnut": "layers/sweet chestnut_mask.png",
+      "sycamore": "layers/sycamore_mask.png"
+    }
+  },
+  "composites": {
+    "all_species": "composites/all_species_composite.png",
+    "individual_species": {
+      "ash": "composites/ash_composite.png",
+      "beech": "composites/beech_composite.png",
+      "birch": "composites/birch_composite.png",
+      "dead-understory": "composites/dead-understory_composite.png",
+      "hawthorn": "composites/hawthorn_composite.png",
+      "lime spp.": "composites/lime spp._composite.png",
+      "oak": "composites/oak_composite.png",
+      "sweet chestnut": "composites/sweet chestnut_composite.png",
+      "sycamore": "composites/sycamore_composite.png"
+    }
+  },
+  "web_app_config": {
+    "center_lat": 5737145.282199999,
+    "center_lon": 614738.9192499998,
+    "zoom_level": 16,
+    "image_bounds": [
+      [
+        5737055.846415076,
+        614626.0727505416
+      ],
+      [
+        5737234.717984922,
+        614851.765749458
+      ]
+    ]
+  }
+}
