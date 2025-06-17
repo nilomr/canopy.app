@@ -15,6 +15,7 @@
 	let imageWidth = 0;
 	let imageHeight = 0;
 	let sidebarCollapsed = false;
+	let mainImageLoaded = false;
 
 	// Load metadata on mount
 	onMount(async () => {
@@ -25,6 +26,8 @@
 			// Load crown shapefile if metadata is loaded
 			if (metadata) {
 				await loadCrownData();
+				// Preload the main RGB background image
+				await preloadMainImage();
 			}
 		} catch (error) {
 			console.error('Failed to load metadata:', error);
@@ -47,6 +50,27 @@
 		} catch (error) {
 			console.error('Failed to load crown data:', error);
 		}
+	}
+
+	// Preload the main RGB background image
+	async function preloadMainImage() {
+		if (!metadata?.layers?.rgb_background) return;
+		
+		return new Promise<void>((resolve, reject) => {
+			const img = new Image();
+			img.onload = () => {
+				imageWidth = img.naturalWidth;
+				imageHeight = img.naturalHeight;
+				mainImageLoaded = true;
+				resolve();
+			};
+			img.onerror = () => {
+				console.error('Failed to preload main image');
+				mainImageLoaded = true; // Still show the UI even if image fails
+				resolve();
+			};
+			img.src = `/web_layers/${metadata.layers.rgb_background}`;
+		});
 	}
 
 	// Helper function to get species color
@@ -158,11 +182,14 @@
 		}
 	}
 
-	// Handle image load to get dimensions
+	// Handle image load to get dimensions (fallback if preload didn't work)
 	function handleImageLoad(event: Event) {
 		const img = event.target as HTMLImageElement;
-		imageWidth = img.naturalWidth;
-		imageHeight = img.naturalHeight;
+		if (!mainImageLoaded) {
+			imageWidth = img.naturalWidth;
+			imageHeight = img.naturalHeight;
+			mainImageLoaded = true;
+		}
 	}
 
 	// Helper function to get species from crown properties
@@ -291,11 +318,13 @@
 	<title>WYTHAM TREE SPECIES</title>
 </svelte:head>
 
-{#if !metadata}
+{#if !metadata || !mainImageLoaded}
 	<div class="flex h-screen items-center justify-center bg-gray-50">
 		<div class="flex items-center space-x-3">
 			<div class="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div>
-			<span class="text-gray-700 font-medium">Loading canopy data...</span>
+			<span class="text-gray-700 font-medium">
+				{!metadata ? 'Loading canopy data...' : 'Loading images...'}
+			</span>
 		</div>
 	</div>
 {:else}
