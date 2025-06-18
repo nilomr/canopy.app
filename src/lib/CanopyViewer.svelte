@@ -444,7 +444,7 @@
 			<!-- Sidebar content wrapper -->
 			<div class="flex flex-col h-full {sidebarCollapsed ? 'md:hidden' : ''}">
 				<!-- Title -->
-				<div class="flex-shrink-0 p-6 border-b border-gray-100">
+				<div class="flex-shrink-0 p-4 border-b border-gray-100">
 					<h1 class="text-m font-bold text-gray-900 leading-tight">
 						WYTHAM TREE SPECIES<br/>
 						<span class="text-gray-600 font-normal">Segmentation viewer</span>
@@ -452,7 +452,7 @@
 				</div>
 
 				<!-- Controls Panel -->
-				<div class="flex-shrink-0 p-6 border-b border-gray-100">
+				<div class="flex-shrink-0 p-4 border-b border-gray-100">
 					<div class="flex items-center justify-between">
 						<span class="text-sm font-medium text-gray-700">Crown Outlines</span>
 						<label class="relative inline-flex items-center cursor-pointer">
@@ -468,14 +468,14 @@
 
 				<!-- Species Selection -->
 				<div class="flex-1 overflow-y-auto">
-					<div class="p-6">
-						<div class="flex items-center justify-between mb-4">
+					<div class="p-4">
+						<div class="flex items-center justify-between mb-3">
 							<h3 class="text-sm font-medium text-gray-700">Species</h3>
 						</div>
 
 						<!-- Enhanced Select All Button -->
 						<button
-							class="flex items-center justify-center w-full p-3 mb-4 rounded-lg border-2 border-dashed border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-all duration-150 font-medium text-sm"
+							class="flex items-center justify-center w-full p-2.5 mb-3 rounded-lg border-2 border-dashed border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-all duration-150 font-medium text-sm"
 							onclick={toggleAllSpecies}
 						>
 							<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -488,10 +488,10 @@
 							{areAllSpeciesSelected() ? 'Clear all species' : 'Select all species'}
 						</button>
 
-						<div class="space-y-2">
+						<div class="space-y-1.5">
 							{#each metadata.species_list as species}
 								<button
-									class="flex items-center w-full p-3 rounded-lg border transition-all duration-150 hover:bg-gray-50 {selectedSpecies.has(species)
+									class="flex items-center w-full p-2.5 rounded-lg border transition-all duration-150 hover:bg-gray-50 {selectedSpecies.has(species)
 										? 'border-gray-900 bg-gray-50'
 										: 'border-gray-200'}"
 									onclick={() => toggleSpecies(species)}
@@ -519,7 +519,7 @@
 				<!-- Info Panel -->
 				<div class="flex-shrink-0 border-t border-gray-100">
 					<button
-						class="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
+						class="flex w-full items-center justify-between p-3 text-left hover:bg-gray-50 transition-colors"
 						onclick={toggleInfo}
 					>
 						<span class="text-sm font-medium text-gray-700">Dataset Information</span>
@@ -534,9 +534,9 @@
 					</button>
 
 					{#if !infoCollapsed}
-						<div class="px-4 pb-4">
+						<div class="px-3 pb-3">
 							<div class="text-xs text-gray-600 space-y-2">
-								<div class="grid grid-cols-2 gap-4">
+								<div class="grid grid-cols-2 gap-3">
 									<div>
 										<div class="font-medium text-gray-700">Coordinate System</div>
 										<div>EPSG:32630</div>
