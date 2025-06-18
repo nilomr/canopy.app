@@ -10,27 +10,36 @@
 	let showCrownOutlines = false;
 	let imageContainer: HTMLDivElement;
 	let isDragging = false;
+	let isTouching = false;
 	let infoCollapsed = true;
 	let crownPolygons: CrownPolygon[] = [];
 	let imageWidth = 0;
 	let imageHeight = 0;
 	let sidebarCollapsed = false;
 	let mainImageLoaded = false;
+	let masksLoaded = false;
+	let loadingProgress = 0;
+	let loadingStatus = 'Loading canopy data...';
 
 	// Load metadata on mount
 	onMount(async () => {
 		try {
+			loadingStatus = 'Loading metadata...';
 			const response = await fetch('/web_layers/web_metadata.json');
 			metadata = await response.json();
 			
 			// Load crown shapefile if metadata is loaded
 			if (metadata) {
+				loadingStatus = 'Loading crown data...';
 				await loadCrownData();
-				// Preload the main RGB background image
-				await preloadMainImage();
+				
+				// Preload all images
+				loadingStatus = 'Loading images...';
+				await preloadAllImages();
 			}
 		} catch (error) {
 			console.error('Failed to load metadata:', error);
+			loadingStatus = 'Error loading data';
 		}
 	});
 
@@ -52,25 +61,62 @@
 		}
 	}
 
-	// Preload the main RGB background image
-	async function preloadMainImage() {
-		if (!metadata?.layers?.rgb_background) return;
+	// Preload all images (background + masks)
+	async function preloadAllImages() {
+		if (!metadata?.layers) return;
 		
-		return new Promise<void>((resolve, reject) => {
-			const img = new Image();
-			img.onload = () => {
-				imageWidth = img.naturalWidth;
-				imageHeight = img.naturalHeight;
-				mainImageLoaded = true;
-				resolve();
-			};
-			img.onerror = () => {
-				console.error('Failed to preload main image');
-				mainImageLoaded = true; // Still show the UI even if image fails
-				resolve();
-			};
-			img.src = `/web_layers/${metadata.layers.rgb_background}`;
+		const imagesToLoad = [];
+		
+		// Add background image
+		if (metadata.layers.rgb_background) {
+			imagesToLoad.push({
+				src: `/web_layers/${metadata.layers.rgb_background}`,
+				type: 'background'
+			});
+		}
+		
+		// Add all species masks
+		if (metadata.layers.species_masks) {
+			Object.entries(metadata.layers.species_masks).forEach(([species, maskPath]) => {
+				imagesToLoad.push({
+					src: `/web_layers/${maskPath}`,
+					type: 'mask',
+					species
+				});
+			});
+		}
+		
+		let loadedCount = 0;
+		const totalImages = imagesToLoad.length;
+		
+		const loadPromises = imagesToLoad.map(imageInfo => {
+			return new Promise<void>((resolve, reject) => {
+				const img = new Image();
+				img.onload = () => {
+					if (imageInfo.type === 'background') {
+						imageWidth = img.naturalWidth;
+						imageHeight = img.naturalHeight;
+						mainImageLoaded = true;
+					}
+					loadedCount++;
+					loadingProgress = Math.round((loadedCount / totalImages) * 100);
+					loadingStatus = `Loading images... ${loadedCount}/${totalImages}`;
+					resolve();
+				};
+				img.onerror = () => {
+					console.error(`Failed to preload image: ${imageInfo.src}`);
+					loadedCount++;
+					loadingProgress = Math.round((loadedCount / totalImages) * 100);
+					loadingStatus = `Loading images... ${loadedCount}/${totalImages}`;
+					resolve(); // Continue even if some images fail
+				};
+				img.src = imageInfo.src;
+			});
 		});
+		
+		await Promise.all(loadPromises);
+		masksLoaded = true;
+		loadingStatus = 'Ready!';
 	}
 
 	// Helper function to get species color
@@ -148,6 +194,26 @@
 		isDragging = false;
 	}
 
+	// Handle touch events for slider (mobile)
+	function handleTouchStart(event: TouchEvent) {
+		// Only start dragging if we're touching the slider handle
+		const target = event.target as HTMLElement;
+		if (target.closest('.slider-handle')) {
+			isTouching = true;
+			updateSliderFromTouch(event);
+		}
+	}
+
+	function handleTouchMove(event: TouchEvent) {
+		if (isTouching) {
+			updateSliderFromTouch(event);
+		}
+	}
+
+	function handleTouchEnd() {
+		isTouching = false;
+	}
+
 	function updateSliderFromMouse(event: MouseEvent) {
 		if (!imageContainer) return;
 
@@ -157,17 +223,32 @@
 		sliderValue = Math.round(percentage);
 	}
 
+	function updateSliderFromTouch(event: TouchEvent) {
+		if (!imageContainer || event.touches.length === 0) return;
+
+		const rect = imageContainer.getBoundingClientRect();
+		const x = event.touches[0].clientX - rect.left;
+		const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+		sliderValue = Math.round(percentage);
+	}
+
 	// Add global event listeners
 	onMount(() => {
 		const handleGlobalMouseMove = (event: MouseEvent) => handleMouseMove(event);
 		const handleGlobalMouseUp = () => handleMouseUp();
+		const handleGlobalTouchMove = (event: TouchEvent) => handleTouchMove(event);
+		const handleGlobalTouchEnd = () => handleTouchEnd();
 
 		document.addEventListener('mousemove', handleGlobalMouseMove);
 		document.addEventListener('mouseup', handleGlobalMouseUp);
+		document.addEventListener('touchmove', handleGlobalTouchMove);
+		document.addEventListener('touchend', handleGlobalTouchEnd);
 
 		return () => {
 			document.removeEventListener('mousemove', handleGlobalMouseMove);
 			document.removeEventListener('mouseup', handleGlobalMouseUp);
+			document.removeEventListener('touchmove', handleGlobalTouchMove);
+			document.removeEventListener('touchend', handleGlobalTouchEnd);
 		};
 	});
 
@@ -318,13 +399,26 @@
 	<title>WYTHAM TREE SPECIES</title>
 </svelte:head>
 
-{#if !metadata || !mainImageLoaded}
+{#if !metadata || !mainImageLoaded || !masksLoaded}
 	<div class="flex h-screen items-center justify-center bg-gray-50">
-		<div class="flex items-center space-x-3">
-			<div class="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div>
-			<span class="text-gray-700 font-medium">
-				{!metadata ? 'Loading canopy data...' : 'Loading images...'}
-			</span>
+		<div class="flex flex-col items-center space-y-4 max-w-sm mx-auto p-6">
+			<div class="flex items-center space-x-3">
+				<div class="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div>
+				<span class="text-gray-700 font-medium">
+					{loadingStatus}
+				</span>
+			</div>
+			{#if loadingProgress > 0}
+				<div class="w-full bg-gray-200 rounded-full h-2">
+					<div 
+						class="bg-gray-900 h-2 rounded-full transition-all duration-300 ease-out"
+						style="width: {loadingProgress}%"
+					></div>
+				</div>
+				<div class="text-sm text-gray-600">
+					{loadingProgress}% complete
+				</div>
+			{/if}
 		</div>
 	</div>
 {:else}
@@ -492,6 +586,7 @@
 				class="relative h-full w-full overflow-hidden"
 				bind:this={imageContainer}
 				onmousedown={handleMouseDown}
+				ontouchstart={handleTouchStart}
 				onkeydown={handleKeyDown}
 				role="slider"
 				tabindex="0"
@@ -499,6 +594,7 @@
 				aria-valuemin="0"
 				aria-valuemax="100"
 				aria-valuenow={sliderValue}
+				style="touch-action: none;"
 			>
 				<!-- Background RGB Image -->
 				<img
@@ -579,7 +675,8 @@
 					>
 						<!-- Slider handle -->
 						<div
-							class="slider-handle pointer-events-auto absolute top-1/2 left-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-grab rounded-full bg-white shadow-lg border-2 border-gray-900 {isDragging ? 'cursor-grabbing scale-110' : ''} transition-transform"
+							class="slider-handle pointer-events-auto absolute top-1/2 left-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-grab rounded-full bg-white shadow-lg border-2 border-gray-900 {isDragging || isTouching ? 'cursor-grabbing scale-110' : ''} transition-transform"
+							style="touch-action: none;"
 						>
 						</div>
 					</div>
