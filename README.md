@@ -2,6 +2,8 @@
 
 An interactive web application for visualizing tree species segmentation data. Built with SvelteKit and TypeScript, this viewer allows researchers and users to explore detailed tree crown species identification data.
 
+![Canopy Viewer Screenshot](static/readmepic.png)
+
 ## Features
 
 - **Interactive Species Selection**: Toggle between different tree species to view their segmentation masks
