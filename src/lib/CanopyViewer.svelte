@@ -397,10 +397,11 @@
 
 <svelte:head>
 	<title>WYTHAM TREE SPECIES</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 </svelte:head>
 
 {#if !metadata || !mainImageLoaded || !masksLoaded}
-	<div class="flex h-screen items-center justify-center bg-gray-50">
+	<div class="flex items-center justify-center bg-gray-50" style="height: 100vh; height: 100dvh;">
 		<div class="flex flex-col items-center space-y-4 max-w-sm mx-auto p-6">
 			<div class="flex items-center space-x-3">
 				<div class="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div>
@@ -422,7 +423,7 @@
 		</div>
 	</div>
 {:else}
-	<div class="flex h-full bg-gray-50">
+	<div class="flex bg-gray-50" style="height: 100vh; height: 100dvh;">
 		<!-- Sidebar Toggle Button -->
 		<button
 			class="fixed top-4 left-4 z-30 md:hidden bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200 hover:bg-white transition-all"
@@ -439,7 +440,7 @@
 		</button>
 
 		<!-- Left Sidebar -->
-		<div class="flex w-80 flex-col bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out {sidebarCollapsed ? '-translate-x-full md:translate-x-0 md:w-0 md:border-r-0' : 'translate-x-0'} fixed md:relative z-20 h-full md:h-auto">
+		<div class="flex w-80 flex-col bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out {sidebarCollapsed ? '-translate-x-full md:translate-x-0 md:w-0 md:border-r-0' : 'translate-x-0'} fixed md:relative z-20 md:h-auto" style="height: 100vh; height: 100dvh;">
 			<!-- Sidebar content wrapper -->
 			<div class="flex flex-col h-full {sidebarCollapsed ? 'md:hidden' : ''}">
 				<!-- Title -->
@@ -705,3 +706,24 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	:global(html, body) {
+		height: 100%;
+		overflow: hidden;
+	}
+	
+	:global(#svelte) {
+		height: 100vh;
+		height: 100dvh;
+		display: flex;
+		flex-direction: column;
+	}
+
+	/* Fallback for browsers that don't support dvh */
+	@supports not (height: 100dvh) {
+		:global(#svelte) {
+			height: 100vh;
+		}
+	}
+</style>
