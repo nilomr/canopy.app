@@ -685,13 +685,13 @@
 
 				<!-- Instruction Overlay (when no species selected) -->
 				{#if selectedSpecies.size === 0}
-					<div class="pointer-events-none absolute inset-0 flex items-center justify-center">
-						<div class="bg-white/90 backdrop-blur-sm rounded-2xl p-8 text-center max-w-sm">
-							<div class="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
-								<Tree class="w-6 h-6 text-white" />
+					<div class="pointer-events-none absolute inset-0 flex items-center justify-center p-4 md:p-8">
+						<div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 text-center w-full max-w-xs md:max-w-sm mx-auto">
+							<div class="w-10 h-10 md:w-12 md:h-12 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+								<Tree class="w-5 h-5 md:w-6 md:h-6 text-white" />
 							</div>
-							<h3 class="text-lg font-semibold text-gray-900 mb-2">Select Species</h3>
-							<p class="text-gray-600 text-sm leading-relaxed">
+							<h3 class="text-base md:text-lg font-semibold text-gray-900 mb-2">Select Species</h3>
+							<p class="text-gray-600 text-xs md:text-sm leading-relaxed">
 								Choose one or more tree species from the sidebar to view the segmentation analysis
 							</p>
 						</div>
