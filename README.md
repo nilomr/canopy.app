@@ -1,4 +1,4 @@
-# Canopy Tree Species Segmentation Viewer
+# Canopy species segmentation viewer
 
 An interactive web application for visualizing tree species segmentation data. Built with SvelteKit and TypeScript, this viewer allows researchers and users to explore detailed tree crown species identification data.
 
@@ -6,10 +6,10 @@ An interactive web application for visualizing tree species segmentation data. B
 
 ## Features
 
-- **Interactive Species Selection**: Toggle between different tree species to view their segmentation masks
-- **Image Comparison Slider**: Drag to show species-specific overlays
-- **Crown Outline Visualization**: Display individual, manually created tree crown boundaries from shapefile data
-- **Responsive Design**: Works on desktop and mobile devices
+- **Interactive species selection**: Toggle between different tree species to view their segmentation masks
+- **Image comparison slider**: Drag to show species-specific overlays
+- **Crown outline visualization**: Display individual, manually created tree crown boundaries from shapefile data
+- **Responsive design**: Works on desktop and mobile devices
 - **Accessibility**: Keyboard navigation and ARIA labels for screen readers
 
 ## Getting Started
@@ -116,10 +116,10 @@ npm run preview
 
 ## Usage
 
-1. **Select Species**: Use the sidebar to select one or more tree species
-2. **Compare Images**: Drag the slider to compare RGB imagery with segmentation overlays
-3. **View Crown Outlines**: Toggle crown boundaries to see individual tree detection
-4. **Mobile Navigation**: Use the hamburger menu on mobile devices
+1. **Select species**: Use the sidebar to select one or more tree species
+2. **Compare images**: Drag the slider to compare RGB imagery with segmentation overlays
+3. **View crown outlines**: Toggle crown boundaries to see individual tree detection
+4. **Mobile navigation**: Use the hamburger menu on mobile devices
 
 ## Contributing
 
