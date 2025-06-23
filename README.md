@@ -1,6 +1,6 @@
 # Canopy species segmentation viewer
 
-An interactive web application for visualizing tree species segmentation data. Built with SvelteKit and TypeScript, this viewer allows researchers and users to explore detailed tree crown species identification data.
+An interactive web application for visualizing tree species segmentation data derived from ML models. Built with Svelte(Kit) and TypeScript.
 
 ![Canopy Viewer Screenshot](static/canopy-mock-small.jpg)
 
